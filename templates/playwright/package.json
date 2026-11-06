@@ -1,0 +1,10 @@
+{
+  "name": "qa-playwright-consumer",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:report": "playwright show-report"
+  },
+  "devDependencies": {"@playwright/test": "latest", "typescript": "latest"}
+}

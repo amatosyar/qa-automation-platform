@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["case_id", "status", "timestamp", "artifacts"],
+  "properties": {
+    "case_id": {"type": "string"},
+    "status": {"enum": ["PASS", "FAIL", "BLOCKED"]},
+    "timestamp": {"type": "string"},
+    "artifacts": {"type": "array", "items": {"type": "string"}},
+    "notes": {"type": "string"}
+  }
+}
