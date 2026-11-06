@@ -1,114 +1,578 @@
 # QA Automation Platform
 
-Framework centralizado y agnostico de proveedor de IA para convertir una Matriz de Pruebas + EF + ET en automatizacion Web Playwright trazable, revisada y reutilizable.
+Framework centralizado para implementar, ejecutar y gobernar automatización Web con Playwright a partir de artefactos funcionales y técnicos verificables.
+
+El framework separa el razonamiento de los agentes de las operaciones determinísticas del Core y mantiene evidencia, conocimiento y trazabilidad dentro del proyecto.
+
+---
 
 ## Objetivo
 
-Separar tres responsabilidades: gobernar el trabajo, implementar la automatizacion y revisar su calidad. El conocimiento comun vive en el framework; cada proyecto conserva solo sus artefactos, codigo, evidencia y conocimiento local.
+Recibir como entrada:
 
-## Arquitectura
+- Matriz de Pruebas.
+- EF - Especificación Funcional.
+- ET - Especificación Técnica.
 
-```text
-MATRIZ + EF + ET
-       |
-       v
-+-------------------+
-|  QA ORCHESTRATOR  |
-+---------+---------+
-          |
-          | caso listo
-          v
-+---------------------+       FAIL
-| PLAYWRIGHT ENGINEER |<------------------+
-+----------+----------+                   |
-           |                              |
-           v                              |
-+---------------------+                   |
-| AUTOMATION REVIEWER |-------------------+
-+----------+----------+
+Flujo principal:
+
+    Matriz + EF + ET
            |
-          PASS
            v
-        LISTO
-```
+    QA Orchestrator
+           |
+           v
+    Playwright Engineer
+           |
+           v
+    Automation Reviewer
+           |
+       FAIL / PASS
+         |      |
+         |      +----> LISTO
+         |
+         +----> Engineer -> Review
 
-## Agentes
-
-- `qa-orchestrator`: analiza Matriz/EF/ET, consulta conocimiento, gestiona gaps/conflictos y coordina el flujo. No implementa Playwright.
-- `playwright-engineer`: crea/reutiliza arquitectura, implementa casos, ejecuta pruebas y corrige findings.
-- `automation-reviewer`: quality gate independiente. Contrasta artefactos vs codigo y devuelve PASS/FAIL.
+---
 
 ## Principios
 
-1. Evidencia antes que inferencia.
-2. La Matriz define los casos; EF y ET aportan contexto funcional y tecnico.
-3. Un gap critico bloquea solo el caso afectado.
-4. Ningun agente se autoaprueba.
-5. Conocimiento central y conocimiento de proyecto se mantienen separados.
-6. No almacenar secretos en codigo, memoria ni evidencia.
-7. Selectores y comportamiento de UI deben provenir de evidencia inspeccionable.
-8. El framework debe poder ejecutarse con Claude, GitHub Copilot u otro runtime de agentes.
+### Evidencia antes que inferencia
 
-## Estructura
+Toda decisión relevante debe estar sustentada por una fuente verificable.
 
-```text
-qa-automation-platform/
-├── agents/                 # definiciones de agentes
-├── skills/                 # capacidades reutilizables
-├── core/
-│   ├── artifacts/          # normalizacion Matriz/EF/ET
-│   ├── knowledge/          # memoria verificable
-│   ├── traceability/       # Matriz -> EF/ET -> test -> evidencia
-│   ├── evidence/           # resultados y evidencias
-│   └── bootstrap/          # creacion de proyectos consumidores
-├── templates/playwright/   # baseline de proyecto Web
-└── docs/
-```
+Fuentes válidas:
 
-## Flujo operativo
+- Matriz de Pruebas.
+- EF.
+- ET.
+- Código existente.
+- Aplicación inspeccionada.
+- Conocimiento verificable registrado por la plataforma.
 
-1. Ingestar Matriz, EF y ET sin alterar los originales.
-2. Normalizar los artefactos a una representacion consultable.
-3. Consultar conocimiento central y conocimiento local vigente.
-4. Validar cada caso: CONFIRMADO, POR_VALIDAR, GAP o CONFLICTO.
-5. Delegar solo casos implementables al Playwright Engineer.
-6. Implementar/reutilizar pages, components, fixtures, data y helpers.
-7. Ejecutar y guardar evidencia estructurada.
-8. Automation Reviewer revisa trazabilidad, cobertura y calidad tecnica.
-9. FAIL vuelve al Engineer con findings; PASS cierra el caso.
-10. Registrar conocimiento reutilizable como PROVISIONAL; la verificacion es explicita.
+Una interpretación no se convierte automáticamente en requisito confirmado.
+
+### La Matriz contiene los casos
+
+La Matriz es la fuente principal de los casos de prueba.
+
+EF y ET aportan contexto funcional y técnico para comprender e implementar correctamente cada caso.
+
+### Bloqueo parcial
+
+Un GAP o CONFLICTO bloquea únicamente el caso afectado cuando sea posible.
+
+### Quality Gate independiente
+
+El Playwright Engineer no aprueba su propia implementación.
+
+El Automation Reviewer realiza el review y el Core aplica gates determinísticos.
+
+---
+
+## Arquitectura
+
+    QA AUTOMATION PLATFORM
+    |
+    +-- Agents
+    |   +-- QA Orchestrator
+    |   +-- Playwright Engineer
+    |   +-- Automation Reviewer
+    |
+    +-- Skills
+    |   +-- Artifact Analysis
+    |   +-- QA Automation Workflow
+    |   +-- Playwright Architecture
+    |   +-- Playwright Implementation
+    |   +-- Locator Strategy
+    |   +-- Evidence Management
+    |   +-- Playwright Quality Gate
+    |
+    +-- Deterministic Core
+        +-- Artifact Engine
+        +-- Knowledge Engine
+        +-- Lifecycle
+        +-- Intervention
+        +-- Results
+        +-- Quality Gate
+        +-- Traceability
+        +-- Evidence
+        +-- Bootstrap
+
+---
+
+## Agentes
+
+### QA Orchestrator
+
+Responsable de gobernar el proceso.
+
+- valida Matriz, EF y ET;
+- consulta conocimiento vigente;
+- registra conocimiento consultado, aplicado y descartado;
+- cruza casos con evidencia funcional y técnica;
+- detecta GAP y CONFLICTO;
+- delega casos listos;
+- coordina Engineer y Reviewer;
+- mantiene trazabilidad;
+- registra conocimiento reutilizable como PROVISIONAL.
+
+No implementa Playwright y no aprueba código.
+
+### Playwright Engineer
+
+Responsable de construir y ejecutar la automatización.
+
+- inspecciona el proyecto existente;
+- reutiliza Pages, Components, Fixtures y Helpers;
+- implementa tests;
+- administra Test Data;
+- utiliza locators verificables;
+- utiliza waits determinísticos;
+- ejecuta pruebas;
+- captura evidencia;
+- corrige findings del Reviewer.
+
+No modifica el significado del caso para hacer pasar una prueba.
+
+### Automation Reviewer
+
+Quality Gate independiente.
+
+Valida:
+
+- Matriz / EF / ET vs implementación;
+- cobertura;
+- assertions;
+- arquitectura;
+- reutilización;
+- locators;
+- waits;
+- datos;
+- secretos y hardcodes;
+- independencia;
+- cleanup;
+- paralelismo;
+- flakiness;
+- evidencia de ejecución.
+
+Resultados: PASS o FAIL.
+
+---
+
+## Artifact Engine
+
+Procesa Matriz XLSX, EF DOCX y ET DOCX.
+
+Los originales no deben modificarse.
+
+Cada artefacto normalizado conserva:
+
+- archivo origen;
+- SHA-256;
+- extractor utilizado;
+- versión de schema;
+- contenido;
+- referencias de procedencia.
+
+Ejemplos de procedencia:
+
+    matriz.xlsx#Casos!R2
+    EF.docx#paragraph-4
+    ET.docx#table-2-row-3
+
+Esto permite mantener trazabilidad hasta la fuente original.
+
+---
+
+## Knowledge Engine
+
+Memoria verificable almacenada dentro del repositorio.
+
+Tipos:
+
+    REGLA_DOCUMENTADA
+    COMPORTAMIENTO_OBSERVADO
+    SOLUCION_TECNICA_COMPROBADA
+    DATO_DE_PRUEBA
+    INTERVENCION_MANUAL
+    DUDA_PENDIENTE
+
+Estados:
+
+    PROVISIONAL
+    VERIFICADO
+    INVALIDADO
+    REEMPLAZADO
+
+Una entrada nueva es PROVISIONAL por defecto.
+
+VERIFICADO requiere una acción explícita.
+
+Invalidar o reemplazar conocimiento conserva el historial.
+
+El Knowledge Engine permite:
+
+    add
+    read
+    search
+    verify
+    invalidate
+    replace
+    register_query
+    read_query
+
+Las consultas registran conocimiento consultado, aplicado, descartado y el motivo del descarte.
+
+---
+
+## Lifecycle
+
+Estados actuales:
+
+    DISCOVERED
+        |
+        v
+    ANALYZED
+        |
+        v
+    READY
+        |
+        v
+    IMPLEMENTING
+        |
+        v
+    EXECUTED
+        |
+        v
+    IN_REVIEW
+       / \
+    FAIL PASS
+
+También existe BLOCKED.
+
+Las transiciones son validadas por el Core.
+
+---
+
+## Intervention
+
+Permite registrar intervención humana cuando la automatización no puede continuar de forma confiable.
+
+Registra caso, intento, hallazgo, necesidad, acción, observación, evidencia y timestamp.
+
+La plataforma solicita intervención en lugar de fabricar un resultado.
+
+---
+
+## Results
+
+Cada ejecución registra:
+
+- run ID;
+- case ID;
+- intento;
+- estado;
+- duración;
+- ambiente;
+- browser;
+- evidencia;
+- error;
+- timestamp.
+
+Estados de ejecución:
+
+    PASS
+    FAIL
+    BLOCKED
+    ERROR
+    TIMEOUT
+
+---
+
+## Quality Gate
+
+Un caso no queda listo solamente porque el Reviewer indique PASS.
+
+El gate mínimo requiere:
+
+    Execution = PASS
+            +
+    Reviewer = PASS
+            +
+    Traceability = COMPLETE
+            +
+    Evidence = COMPLETE
+            +
+    0 Critical Findings
+            +
+    0 High Findings
+            =
+           PASS
+
+---
 
 ## Proyecto consumidor
 
-```text
-mi-proyecto/
-├── documents/
-│   ├── matriz.xlsx
-│   ├── EF.docx
-│   └── ET.docx
-├── tests/
-├── pages/
-├── components/
-├── fixtures/
-├── data/
-├── evidence/
-├── results/
-├── knowledge/
-└── playwright.config.ts
-```
+Estructura objetivo:
+
+    mi-proyecto/
+    |
+    +-- documents/
+    |   +-- original/
+    |   |   +-- matriz.xlsx
+    |   |   +-- EF.docx
+    |   |   +-- ET.docx
+    |   +-- normalized/
+    |       +-- matrix.normalized.json
+    |       +-- ef.normalized.json
+    |       +-- et.normalized.json
+    |
+    +-- tests/
+    +-- pages/
+    +-- components/
+    +-- fixtures/
+    +-- data/
+    +-- utils/
+    +-- knowledge/
+    |   +-- entries/
+    |   +-- queries/
+    +-- traceability/
+    +-- evidence/
+    +-- results/
+    +-- .env.example
+    +-- playwright.config.ts
+    +-- package.json
+    +-- README.md
+
+---
+
+## Requisitos
+
+Recomendado en macOS:
+
+- Python 3.12+.
+- Node.js LTS.
+- Git.
+- VS Code.
+
+Baseline Python actual:
+
+    >=3.12,<3.15
+
+---
+
+## Obtener el framework
+
+### Opción 1 - ZIP
+
+Descargar qa-automation-platform.zip.
+
+Ejemplo:
+
+    cd "/Users/<usuario>/proyectos_automation"
+    unzip "$HOME/Downloads/qa-automation-platform.zip" -d "/Users/<usuario>/proyectos_automation"
+    cd "/Users/<usuario>/proyectos_automation/qa-automation-platform"
+
+### Opción 2 - Git
+
+Cuando exista un repositorio remoto oficial:
+
+    cd "/Users/<usuario>/proyectos_automation"
+    git clone "<URL_REPOSITORIO>" qa-automation-platform
+    cd "/Users/<usuario>/proyectos_automation/qa-automation-platform"
+
+No reemplazar <URL_REPOSITORIO> hasta disponer de la URL oficial.
+
+---
+
+## Instalación
+
+### 1. Entrar al framework
+
+    cd "/Users/<usuario>/proyectos_automation/qa-automation-platform"
+
+### 2. Validar Python
+
+    python3.12 --version
+
+### 3. Crear entorno virtual
+
+    python3.12 -m venv .venv
+
+### 4. Instalar
+
+    .venv/bin/python -m pip install --upgrade pip
+    .venv/bin/python -m pip install -e ".[dev]"
+
+### 5. Validar runtime
+
+    .venv/bin/python --version
+
+---
+
+## Validar instalación
+
+Suite completa:
+
+    cd "/Users/<usuario>/proyectos_automation/qa-automation-platform"
+    .venv/bin/python -m pytest -v
+
+Artifact Engine:
+
+    cd "/Users/<usuario>/proyectos_automation/qa-automation-platform"
+    .venv/bin/python -m pytest tests/unit/test_artifacts.py -v -rs
+
+Una instalación válida debe tener:
+
+    0 failed
+    0 errors
+    0 skipped en tests críticos
+
+---
+
+## Desarrollo
+
+Compilar Core:
+
+    cd "/Users/<usuario>/proyectos_automation/qa-automation-platform"
+    .venv/bin/python -m compileall -q core tests
+
+Ejecutar tests:
+
+    cd "/Users/<usuario>/proyectos_automation/qa-automation-platform"
+    .venv/bin/python -m pytest -v
+
+Estado Git:
+
+    cd "/Users/<usuario>/proyectos_automation/qa-automation-platform"
+    git status --short
+
+---
 
 ## Gobierno de evidencia
 
-Fuentes validas: Matriz, EF, ET, codigo existente, aplicacion inspeccionada y conocimiento verificable. Una interpretacion no se convierte en requisito confirmado. Los conflictos documentales no se resuelven arbitrariamente.
+Clasificaciones:
 
-Estados de conocimiento recomendados: `PROVISIONAL`, `VERIFICADO`, `INVALIDADO`, `REEMPLAZADO`.
+    CONFIRMADO
+    POR_VALIDAR
+    GAP
+    CONFLICTO
 
-Tipos recomendados: `REGLA_DOCUMENTADA`, `COMPORTAMIENTO_OBSERVADO`, `SOLUCION_TECNICA_COMPROBADA`, `DATO_DE_PRUEBA`, `INTERVENCION_MANUAL`, `DUDA_PENDIENTE`.
+POR_VALIDAR nunca se convierte automáticamente en requisito confirmado.
 
-## Quality Gate minimo
+Un conflicto entre fuentes no se resuelve arbitrariamente.
 
-Un caso solo queda LISTO si: implementacion ejecutada, trazabilidad completa, sin secretos/hardcodes indebidos, locators justificables, waits deterministas, assertions alineadas al caso y Reviewer = PASS.
+---
 
-## Inspiracion Auto-LDS
+## Seguridad
 
-Se reutilizan conceptualmente: memoria central verificable, registro de consultas, bootstrap, resultados/evidencia e intervencion humana. No se copian decisiones especificas de LDS, scripts CP autonomos, credenciales embebidas ni waits fijos como estandar.
+No almacenar passwords, tokens, API keys, secretos ni credenciales.
+
+Utilizar variables de entorno y secret stores.
+
+La memoria persistente nunca ejecuta contenido almacenado como código.
+
+---
+
+## Estándares Playwright
+
+No utilizar waitForTimeout() como solución por defecto.
+
+Prioridad de locators:
+
+    1. data-testid / data-test
+    2. role + accessible name
+    3. label
+    4. texto estable
+    5. CSS/XPath solamente cuando esté justificado
+
+Un locator debe ser verificable.
+
+No inventar selectores.
+
+---
+
+## Inspiración Auto-LDS
+
+Auto-LDS se utiliza como referencia funcional para identificar capacidades útiles de una plataforma autónoma de QA.
+
+Se adoptan conceptualmente:
+
+- memoria central verificable;
+- registro de consultas;
+- bootstrap de proyectos;
+- extracción de Matriz;
+- extracción de documentos;
+- resultados;
+- evidencia;
+- intervención humana;
+- manejo explícito de estados de ejecución.
+
+No se copian como estándar general:
+
+- decisiones específicas del dominio LDS;
+- scripts CP autónomos;
+- credenciales embebidas;
+- waits fijos;
+- acoplamiento a una herramienta de IA específica.
+
+QA Automation Platform debe permanecer independiente de Claude, GitHub Copilot, ChatGPT y de un dominio funcional específico.
+
+---
+
+## Estado actual
+
+Implementado:
+
+- [x] Foundation Core.
+- [x] Lifecycle.
+- [x] Intervention.
+- [x] Results.
+- [x] Deterministic Quality Gate.
+- [x] Knowledge Engine.
+- [x] Artifact Engine XLSX.
+- [x] Artifact Engine DOCX.
+- [x] Source SHA-256.
+- [x] Source provenance.
+- [x] Unit tests.
+
+Próximas capas:
+
+- [ ] Traceability Engine.
+- [ ] Evidence Engine completo.
+- [ ] Bootstrap de proyectos.
+- [ ] Case Mapping Matriz -> EF -> ET.
+- [ ] Integración operativa con agentes.
+- [ ] Template Playwright endurecido.
+- [ ] CLI.
+- [ ] CI Quality Gates.
+
+---
+
+## Roadmap técnico
+
+    Baseline
+       |
+       v
+    Foundation v0.2
+       |
+       v
+    Knowledge Engine v0.2
+       |
+       v
+    Artifact Engine v0.2
+       |
+       v
+    Traceability Engine
+       |
+       v
+    Evidence Engine
+       |
+       v
+    Bootstrap
+       |
+       v
+    Agent Integration
+
+Cada capa debe compilar, tener tests, mantener compatibilidad con las capas anteriores y pasar la suite completa antes de continuar.
