@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "qa-automation-platform"
+version = "0.2.0"
+description = "Centralized QA automation platform with evidence, knowledge, traceability and multi-agent orchestration."
+requires-python = ">=3.12,<3.15"
+dependencies = [
+    "openpyxl>=3.1,<4",
+    "python-docx>=1.1,<2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8,<10",
+]
+
+[tool.setuptools.packages.find]
+include = ["core*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-ra"

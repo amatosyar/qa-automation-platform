@@ -28,3 +28,8 @@ blob-report/
 # Temporary files
 *.tmp
 *.log
+
+# Python packaging metadata
+*.egg-info/
+dist/
+build/
