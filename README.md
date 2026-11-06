@@ -290,6 +290,49 @@ Estados de ejecución:
 
 ---
 
+## Canonical Paths
+
+Las rutas persistentes son definidas por el Core.
+
+Los agentes y demás componentes no deben construir manualmente rutas para resultados, evidencia o trazabilidad.
+
+Funciones canónicas actuales:
+
+    result_path()
+    result_ref()
+    evidence_attempt_dir()
+    evidence_manifest_path()
+    evidence_manifest_ref()
+    traceability_case_path()
+
+Esto evita divergencias entre Results, Evidence, Traceability, Integrity y Quality Gate.
+
+---
+
+## Execution Integrity
+
+El Core correlaciona de forma determinística:
+
+    Result
+       +
+    Evidence
+       +
+    Traceability
+       =
+    Execution Integrity
+
+La identidad debe coincidir en:
+
+    run_id
+    case_id
+    attempt
+
+Una evidencia válida perteneciente a otra ejecución no puede utilizarse para aprobar un caso.
+
+El Quality Gate verificado obtiene el estado real desde los artefactos persistidos y no depende únicamente de afirmaciones de un agente.
+
+---
+
 ## Quality Gate
 
 Un caso no queda listo solamente porque el Reviewer indique PASS.
@@ -536,11 +579,13 @@ Implementado:
 - [x] Source SHA-256.
 - [x] Source provenance.
 - [x] Unit tests.
+- [x] Execution Integrity.
+- [x] Canonical Paths.
 
 Próximas capas:
 
-- [ ] Traceability Engine.
-- [ ] Evidence Engine completo.
+- [x] Traceability Engine.
+- [x] Evidence Engine.
 - [ ] Bootstrap de proyectos.
 - [ ] Case Mapping Matriz -> EF -> ET.
 - [ ] Integración operativa con agentes.
