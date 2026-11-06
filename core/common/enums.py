@@ -1,0 +1,59 @@
+"""Estados y tipos oficiales del framework."""
+
+from enum import Enum
+
+
+class KnowledgeType(str, Enum):
+    REGLA_DOCUMENTADA = "REGLA_DOCUMENTADA"
+    COMPORTAMIENTO_OBSERVADO = "COMPORTAMIENTO_OBSERVADO"
+    SOLUCION_TECNICA_COMPROBADA = "SOLUCION_TECNICA_COMPROBADA"
+    DATO_DE_PRUEBA = "DATO_DE_PRUEBA"
+    INTERVENCION_MANUAL = "INTERVENCION_MANUAL"
+    DUDA_PENDIENTE = "DUDA_PENDIENTE"
+
+
+class KnowledgeState(str, Enum):
+    PROVISIONAL = "PROVISIONAL"
+    VERIFICADO = "VERIFICADO"
+    INVALIDADO = "INVALIDADO"
+    REEMPLAZADO = "REEMPLAZADO"
+
+
+class Certainty(str, Enum):
+    CONFIRMADO = "CONFIRMADO"
+    POR_VALIDAR = "POR_VALIDAR"
+    GAP = "GAP"
+    CONFLICTO = "CONFLICTO"
+
+
+class CaseState(str, Enum):
+    DISCOVERED = "DISCOVERED"
+    ANALYZED = "ANALYZED"
+    READY = "READY"
+    IMPLEMENTING = "IMPLEMENTING"
+    EXECUTED = "EXECUTED"
+    IN_REVIEW = "IN_REVIEW"
+    PASS = "PASS"
+    FAIL = "FAIL"
+    BLOCKED = "BLOCKED"
+
+
+class ExecutionStatus(str, Enum):
+    PASS = "PASS"
+    FAIL = "FAIL"
+    BLOCKED = "BLOCKED"
+    ERROR = "ERROR"
+    TIMEOUT = "TIMEOUT"
+
+
+class ReviewStatus(str, Enum):
+    PENDING = "PENDING"
+    PASS = "PASS"
+    FAIL = "FAIL"
+
+
+class InterventionAction(str, Enum):
+    PROVIDE_DATA = "PROVIDE_DATA"
+    MANUAL_EXPLORATION = "MANUAL_EXPLORATION"
+    RETRY = "RETRY"
+    PENDING = "PENDING"
