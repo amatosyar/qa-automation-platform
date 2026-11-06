@@ -564,6 +564,32 @@ QA Automation Platform debe permanecer independiente de Claude, GitHub Copilot, 
 
 ---
 
+## Política de confiabilidad de agentes
+
+Los agentes operan bajo contratos comunes de evidencia y toma de decisiones.
+
+Clasificaciones:
+
+    CONFIRMADO
+    POR_VALIDAR
+    GAP
+    CONFLICTO
+
+Principios:
+
+- no completar información faltante mediante suposición;
+- conservar referencias de procedencia;
+- no convertir conocimiento PROVISIONAL en requisito confirmado;
+- no inventar requisitos, datos, locators, endpoints o resultados;
+- no declarar ejecución o evidencia sin respaldo persistido;
+- respetar Traceability, Evidence, Execution Integrity y Quality Gate;
+- mantener segregación entre Orchestrator, Engineer y Reviewer;
+- bloquear únicamente el alcance afectado cuando sea posible.
+
+Una afirmación de un agente no puede sobreescribir un resultado determinístico del Core.
+
+---
+
 ## Estado actual
 
 Implementado:
@@ -586,9 +612,9 @@ Próximas capas:
 
 - [x] Traceability Engine.
 - [x] Evidence Engine.
-- [ ] Bootstrap de proyectos.
+- [x] Bootstrap de proyectos.
 - [ ] Case Mapping Matriz -> EF -> ET.
-- [ ] Integración operativa con agentes.
+- [x] Agent Contracts y agentes endurecidos.
 - [ ] Template Playwright endurecido.
 - [ ] CLI.
 - [ ] CI Quality Gates.
