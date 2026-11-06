@@ -7,6 +7,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 import json
 
+from core.paths import result_path
+
 from core.common.enums import ExecutionStatus
 
 
@@ -57,17 +59,17 @@ def create_result(
 
 
 def save_result(root: Path, result: ExecutionResult) -> Path:
-    directory = (
-        root
-        / "results"
-        / result.run_id
-        / result.case_id
-        / str(result.attempt)
+    path = result_path(
+        root,
+        run_id=result.run_id,
+        case_id=result.case_id,
+        attempt=result.attempt,
     )
 
-    directory.mkdir(parents=True, exist_ok=True)
-
-    path = directory / "result.json"
+    path.parent.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
 
     path.write_text(
         json.dumps(result.to_dict(), ensure_ascii=False, indent=2),

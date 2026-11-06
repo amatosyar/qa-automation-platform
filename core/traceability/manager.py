@@ -21,6 +21,7 @@ from pathlib import Path
 from typing import Any
 
 from core.common.exceptions import TraceabilityError
+from core.paths import traceability_case_path
 
 
 SCHEMA_VERSION = "1.0"
@@ -32,10 +33,6 @@ def _now() -> str:
 
 def _cases_dir(root: Path) -> Path:
     return root / "cases"
-
-
-def _case_path(root: Path, case_id: str) -> Path:
-    return _cases_dir(root) / f"{case_id}.json"
 
 
 def _read_json(path: Path) -> dict | None:
@@ -88,7 +85,7 @@ def create_case(
             "matrix_ref no puede estar vacío"
         )
 
-    path = _case_path(root, case_id)
+    path = traceability_case_path(root, case_id=case_id)
 
     if path.exists():
         raise TraceabilityError(
@@ -122,7 +119,7 @@ def read_case(
     case_id: str,
 ) -> dict | None:
     return _read_json(
-        _case_path(root, case_id)
+        traceability_case_path(root, case_id=case_id)
     )
 
 
@@ -164,7 +161,7 @@ def _append_unique(
     record["updated_at"] = _now()
 
     _write_json(
-        _case_path(root, case_id),
+        traceability_case_path(root, case_id=case_id),
         record,
     )
 
