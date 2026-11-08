@@ -384,8 +384,9 @@ Estructura objetivo:
     +-- evidence/
     +-- results/
     +-- .env.example
-    +-- playwright.config.ts
-    +-- package.json
+    +-- pyproject.toml
+    +-- pytest.ini
+    +-- conftest.py
     +-- README.md
 
 ---
@@ -394,10 +395,10 @@ Estructura objetivo:
 
 Recomendado en macOS:
 
-- Python 3.12+.
-- Node.js LTS.
+- Python 3.12.
 - Git.
 - VS Code.
+- Browser compatible y autorizado para Playwright.
 
 Baseline Python actual:
 
@@ -518,6 +519,44 @@ La memoria persistente nunca ejecuta contenido almacenado como código.
 
 ---
 
+## Runtime Playwright Python
+
+El proyecto consumidor utiliza Python como runtime de automatización:
+
+- Python 3.12;
+- Playwright para Python;
+- pytest;
+- pytest-playwright.
+
+Node.js y TypeScript no forman parte del runtime requerido del proyecto consumidor.
+
+El browser debe ser configurable por ambiente.
+
+Prioridad:
+
+1. `BROWSER_EXECUTABLE` cuando exista un ejecutable autorizado específico;
+2. `BROWSER_CHANNEL`, por ejemplo `chrome`;
+3. browser administrado por Playwright cuando el ambiente lo permita.
+
+No hardcodear rutas de usuario, hostnames ni ejecutables específicos de una máquina.
+
+## Application Discovery
+
+La existencia funcional de un elemento en Matriz, EF o ET no confirma automáticamente su locator técnico.
+
+Para un locator nuevo:
+
+1. inspeccionar la aplicación real;
+2. obtener evidencia verificable del DOM;
+3. seleccionar una estrategia;
+4. comprobar `match_count`;
+5. conservar procedencia;
+6. clasificar como `VERIFIED`, `NOT_FOUND` o `AMBIGUOUS`.
+
+Solo un locator nuevo `VERIFIED` puede incorporarse a Pages o Components.
+
+Una captura de pantalla puede aportar evidencia visual, pero no demuestra por sí sola selector, atributo DOM, `data-testid`, role, label, accessible name o unicidad.
+
 ## Estándares Playwright
 
 No utilizar waitForTimeout() como solución por defecto.
@@ -615,7 +654,7 @@ Próximas capas:
 - [x] Bootstrap de proyectos.
 - [ ] Case Mapping Matriz -> EF -> ET.
 - [x] Agent Contracts y agentes endurecidos.
-- [ ] Template Playwright endurecido.
+- [x] Template Playwright Python endurecido.
 - [ ] CLI.
 - [ ] CI Quality Gates.
 

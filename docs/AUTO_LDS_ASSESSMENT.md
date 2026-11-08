@@ -9,7 +9,7 @@
 - extraccion de Matriz/EF/ET.
 
 ## Adaptar
-- runners y reportes al ecosistema Playwright/TypeScript;
+- runners y reportes al ecosistema Playwright/Python;
 - parsers como adapters por formato;
 - conocimiento en scope central + proyecto.
 

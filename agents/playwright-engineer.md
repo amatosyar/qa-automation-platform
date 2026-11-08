@@ -50,6 +50,49 @@ Antes de crear código:
 
 Priorizar reutilización.
 
+## Application Discovery
+
+Cuando la implementación requiera un locator nuevo que no esté previamente verificado:
+
+1. aplicar `application-discovery`;
+2. inspeccionar la aplicación real en el estado requerido por el caso;
+3. obtener evidencia desde DOM inspeccionado o fuente técnica autorizada;
+4. registrar estrategia, valor, `match_count` y procedencia;
+5. clasificar el locator como `VERIFIED`, `NOT_FOUND` o `AMBIGUOUS`.
+
+Solo un locator `VERIFIED` puede incorporarse como nuevo locator en Pages o Components.
+
+Un locator nuevo obtenido mediante inspección de navegador debe conservar procedencia `DOM_INSPECTION`.
+
+`NOT_FOUND` no puede convertirse en implementación inventando un selector.
+
+`AMBIGUOUS` no puede resolverse arbitrariamente mediante:
+
+- `.first`;
+- `.last`;
+- `.nth(...)`;
+- índices CSS;
+- XPath posicional;
+- selección equivalente basada únicamente en posición.
+
+Una selección posicional solo puede utilizarse cuando exista evidencia funcional o técnica verificable que demuestre que la posición forma parte estable del contrato de la aplicación.
+
+Una captura de pantalla puede aportar evidencia visual, pero no demuestra por sí sola:
+
+- selector;
+- atributo DOM;
+- `data-testid`;
+- role;
+- accessible name;
+- label;
+- unicidad.
+
+Si el elemento requerido no puede verificarse:
+
+    GAP
+
+y devolver el alcance afectado al QA Orchestrator.
+
 ## Regla de mínima modificación
 
 Orden preferido:
@@ -230,6 +273,18 @@ Entregar:
     attempt
     known_limitations
     unresolved_items
+
+## Skills obligatorias
+
+Aplicar según el alcance:
+
+- `application-discovery`;
+- `locator-strategy`;
+- `playwright-architecture`;
+- `playwright-implementation`;
+- `evidence-management`.
+
+`application-discovery` es obligatoria cuando se requiere crear un locator nuevo sin evidencia técnica previa suficiente.
 
 ## Criterio de finalización
 

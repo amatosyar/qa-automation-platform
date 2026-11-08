@@ -39,3 +39,39 @@ La memoria complementa la evidencia actual; no reemplaza Matriz/EF/ET.
 - Gate 2: caso suficientemente definido.
 - Gate 3: implementacion ejecutable.
 - Gate 4: review tecnico y funcional PASS.
+
+## Application Discovery
+
+Application Discovery pertenece al flujo técnico del Playwright Engineer.
+
+Flujo:
+
+    Caso habilitado
+          |
+          v
+    Playwright Engineer
+          |
+          v
+    Application Discovery
+          |
+          +-- aplicación real
+          +-- DOM
+          +-- accessibility
+          +-- código verificable
+          |
+          v
+    Locator Evidence
+          |
+          +-- VERIFIED
+          +-- NOT_FOUND
+          +-- AMBIGUOUS
+
+El Core define y valida el contrato determinístico de discovery.
+
+La skill `application-discovery` gobierna el procedimiento.
+
+El agente no puede promover un locator ambiguo o inexistente a verificado mediante inferencia.
+
+La aplicación consumidora utiliza Playwright para Python y un browser configurable por ambiente.
+
+El Core no depende de Chrome, Chromium, Copilot, Claude ni de un hostname específico.

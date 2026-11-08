@@ -33,3 +33,6 @@ blob-report/
 *.egg-info/
 dist/
 build/
+
+# Local pilots / validation workspaces
+pilot/
